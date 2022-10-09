@@ -23,7 +23,7 @@ public class AnalyticsCounter implements ISymptomReader {
 	}
 
 	/**
-	 * Lecture du fichier
+	 * Lecture du fichier et affichage
 	 */
 	public void ReadTheFile() {
 		if (fileToAnalyze != null) {
@@ -57,8 +57,7 @@ public class AnalyticsCounter implements ISymptomReader {
 
 	/**
 	 * Ordonne et écrit dans le fichier en argument
-	 * 
-	 * @param fileToWrite
+	 *  * @param fileToWrite
 	 */
 	public void OrderAndWriteToFile(String fileToWrite) throws IOException {
 		if (fileToWrite != null) {
