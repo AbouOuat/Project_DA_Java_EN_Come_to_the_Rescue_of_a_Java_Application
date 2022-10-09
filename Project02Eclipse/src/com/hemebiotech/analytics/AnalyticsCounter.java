@@ -23,6 +23,7 @@ public class AnalyticsCounter implements ISymptomReader {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Lecture du fichier et affichage
 	 */
 	public void ReadTheFile() {
@@ -58,6 +59,44 @@ public class AnalyticsCounter implements ISymptomReader {
 	/**
 	 * Ordonne et écrit dans le fichier en argument
 	 *  * @param fileToWrite
+=======
+	 * Lecture du fichier
+	 */
+	public void ReadTheFile() {
+		if (fileToAnalyze != null) {
+			try {
+				BufferedReader Lecture = new BufferedReader(new FileReader(fileToAnalyze));
+				String ligne = Lecture.readLine();
+				System.out.println("----Liste des symptomes----");
+				while (ligne != null) {
+					System.out.println(ligne);
+					ligne = Lecture.readLine();
+				}
+				Lecture.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Erreur d'ouverture");
+			} catch (IOException e) {
+				System.out.println("Erreur de lecture");
+			}
+		}
+	}
+
+	/**
+	 * Affichage stylé des symptomes
+	 * 
+	 * @param map : dictionnaire à afficher
+	 */
+	public static <K, V> void printSymptoms(Map<K, V> map) {
+		for (Map.Entry<K, V> entry : map.entrySet()) {
+			System.out.println("Symptome : " + entry.getKey() + " - Occurence : " + entry.getValue());
+		}
+	}
+
+	/**
+	 * Ordonne et écrit dans le fichier en argument
+	 * 
+	 * @param fileToWrite
+>>>>>>> refs/remotes/origin/master
 	 */
 	public void OrderAndWriteToFile(String fileToWrite) throws IOException {
 		if (fileToWrite != null) {
