@@ -36,10 +36,7 @@ public class AnalyticsCounter implements ISymptomReader {
 	}
 
 	/**
-	 * Ordonne et écrit dans le fichier en argument
-	 *  * @param fileToWrite
-=======
-	 * Lecture du fichier
+	 * Lecture du fichier et afficaheg dans la commande
 	 */
 	public void ReadTheFile() {
 		if (fileToAnalyze != null) {
@@ -65,7 +62,6 @@ public class AnalyticsCounter implements ISymptomReader {
 	 * Ordonne et écrit dans le fichier en argument
 	 * 
 	 * @param fileToWrite
->>>>>>> refs/remotes/origin/master
 	 */
 	public void OrderAndWriteToFile(String fileToWrite) throws IOException {
 		if (fileToWrite != null) {
@@ -97,7 +93,7 @@ public class AnalyticsCounter implements ISymptomReader {
 	}
 
 	/**
-	 * Ajoute le symptome
+	 * Ajoute le symptome dans le dictionnaire
 	 * 
 	 * @param Dictionnaire
 	 * @param symptome
