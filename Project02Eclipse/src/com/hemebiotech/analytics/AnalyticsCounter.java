@@ -1,43 +1,137 @@
 package com.hemebiotech.analytics;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class AnalyticsCounter {
-	private static int headacheCount = 0;	// initialize to 0
-	private static int rashCount = 0;		// initialize to 0
-	private static int pupilCount = 0;		// initialize to 0
-	
-	public static void main(String args[]) throws Exception {
-		// first get input
-		BufferedReader reader = new BufferedReader (new FileReader("symptoms.txt"));
-		String line = reader.readLine();
+/**
+ * Cette classe caractérise l'objet fichier à traiter
+ *
+ */
+public class AnalyticsCounter implements ISymptomReader {
 
-		int i = 0;	// set i to 0
-		int headCount = 0;	// counts headaches
-		while (line != null) {
-			i++;	// increment i
-			System.out.println("symptom from file: " + line);
-			if (line.equals("headache")) {
-				headCount++;
-				System.out.println("number of headaches: " + headCount);
-			}
-			else if (line.equals("rush")) {
-				rashCount++;
-			}
-			else if (line.contains("pupils")) {
-				pupilCount++;
-			}
+	private String fileToAnalyze;
+	private Map<String, Integer> DictionnaireTrie;
 
-			line = reader.readLine();	// get another symptom
+	AnalyticsCounter(String fileToAnalyze) {
+		this.fileToAnalyze = fileToAnalyze;
+	}
+
+	/**
+	 * Lecture du fichier
+	 */
+	public void ReadTheFile() {
+		if (fileToAnalyze != null) {
+			try {
+				BufferedReader Lecture = new BufferedReader(new FileReader(fileToAnalyze));
+				String ligne = Lecture.readLine();
+				System.out.println("----Liste des symptomes----");
+				while (ligne != null) {
+					System.out.println(ligne);
+					ligne = Lecture.readLine();
+				}
+				Lecture.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Erreur d'ouverture");
+			} catch (IOException e) {
+				System.out.println("Erreur de lecture");
+			}
+		}
+	}
+
+	/**
+	 * Affichage stylé des symptomes
+	 * 
+	 * @param map : dictionnaire à afficher
+	 */
+	public static <K, V> void printSymptoms(Map<K, V> map) {
+		for (Map.Entry<K, V> entry : map.entrySet()) {
+			System.out.println("Symptome : " + entry.getKey() + " - Occurence : " + entry.getValue());
+		}
+	}
+
+	/**
+	 * Ordonne et écrit dans le fichier en argument
+	 * 
+	 * @param fileToWrite
+	 */
+	public void OrderAndWriteToFile(String fileToWrite) throws IOException {
+		if (fileToWrite != null) {
+			FileWriter myWriter = new FileWriter(fileToWrite);
+			if (DictionnaireTrie.isEmpty() == false) {
+				DictionnaireTrie.forEach((k, v) -> {
+					try {
+						myWriter.write(k + " = " + v + "\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				});
+			} else {
+				CountSymptoms();
+				DictionnaireTrie.forEach((k, v) -> {
+					try {
+						myWriter.write(k + " = " + v + "\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				});
+
+			}
+			myWriter.close();
+		}
+
+	}
+
+	/**
+	 * Ajoute le symptome
+	 * 
+	 * @param Dictionnaire
+	 * @param symptome
+	 */
+	public static void AddSymptome(Map<String, Integer> Dictionnaire, String symptome) {
+		if (Dictionnaire.containsKey(symptome)) {
+			Integer Quantity = Dictionnaire.get(symptome);
+			Quantity += 1;
+			Dictionnaire.put(symptome, Quantity);
+
+		} else {
+			Dictionnaire.put(symptome, 1);
 		}
 		
-		// next generate output
-		FileWriter writer = new FileWriter ("result.out");
-		writer.write("headache: " + headacheCount + "\n");
-		writer.write("rash: " + rashCount + "\n");
-		writer.write("dialated pupils: " + pupilCount + "\n");
-		writer.close();
+
+	}
+
+	/**
+	 * Comptage des occurences
+	 */
+	@Override
+	public void CountSymptoms() {
+		HashMap<String, Integer> resultDictionnaire = new HashMap<String, Integer>();
+		if (fileToAnalyze != null) {
+			try {
+				BufferedReader Lecture = new BufferedReader(new FileReader(fileToAnalyze));
+				String ligne = Lecture.readLine();
+				while (ligne != null) {
+					AddSymptome(resultDictionnaire, ligne);
+					ligne = Lecture.readLine();
+				}
+				Lecture.close();
+
+				DictionnaireTrie = new TreeMap<String, Integer>(resultDictionnaire);
+				printSymptoms(resultDictionnaire);
+
+			} catch (FileNotFoundException e) {
+				System.out.println("Erreur d'ouverture");
+			} catch (IOException e) {
+				System.out.println("Erreur de lecture");
+			}
+		}
 	}
 }
