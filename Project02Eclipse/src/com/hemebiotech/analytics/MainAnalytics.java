@@ -20,18 +20,18 @@ public class MainAnalytics {
 		/**
 		 * Lecture du Fichier
 		 */
-		MyFile.ReadTheFile();
+		MyFile.readTheFile();
 		
 		
 		/**
-		 * Comptage des occurences
+		 * Comptage des occurences et ordonnancement
 		 */
-		MyFile.CountSymptoms();
+		MyFile.countSymptoms();
 		
 		/**
 		 * Ecriture dans un fichier results.out
 		 */
-		MyFile.OrderAndWriteToFile(".//Project02Eclipse//results.out");
+		MyFile.WriteToFile(".//Project02Eclipse//results3.out");
 
 	}
 

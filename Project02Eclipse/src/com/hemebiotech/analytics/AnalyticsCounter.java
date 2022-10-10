@@ -13,10 +13,10 @@ import java.util.TreeMap;
  * Cette classe caractérise l'objet fichier à traiter
  *
  */
-public class AnalyticsCounter implements ISymptomReader {
+public class AnalyticsCounter implements ISymptomReader, ISymptomWriter, ISymptomTreatment {
 
 	private String fileToAnalyze;
-	private Map<String, Integer> DictionnaireTrie;
+	private Map<String, Integer> dictionnaireTrie;
 
 	AnalyticsCounter(String fileToAnalyze) {
 		this.fileToAnalyze = fileToAnalyze;
@@ -29,45 +29,26 @@ public class AnalyticsCounter implements ISymptomReader {
 	 * 
 	 * @param map : dictionnaire à afficher
 	 */
-	public static <K, V> void printSymptoms(Map<K, V> map) {
-		for (Map.Entry<K, V> entry : map.entrySet()) {
+	@Override
+	public void printSymptoms(Map<String,Integer> map) {
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
 			System.out.println("Symptome : " + entry.getKey() + " - Occurence : " + entry.getValue());
 		}
 	}
 
-	/**
-	 * Lecture du fichier et afficaheg dans la commande
-	 */
-	public void ReadTheFile() {
-		if (fileToAnalyze != null) {
-			try {
-				BufferedReader Lecture = new BufferedReader(new FileReader(fileToAnalyze));
-				String ligne = Lecture.readLine();
-				System.out.println("----Liste des symptomes----");
-				while (ligne != null) {
-					System.out.println(ligne);
-					ligne = Lecture.readLine();
-				}
-				Lecture.close();
-			} catch (FileNotFoundException e) {
-				System.out.println("Erreur d'ouverture");
-			} catch (IOException e) {
-				System.out.println("Erreur de lecture");
-			}
-		}
-	}
-
-	
+		
 	/**
 	 * Ordonne et écrit dans le fichier en argument
 	 * 
 	 * @param fileToWrite
 	 */
-	public void OrderAndWriteToFile(String fileToWrite) throws IOException {
+	@Override
+	public void WriteToFile(String fileToWrite) {
 		if (fileToWrite != null) {
+			try {
 			FileWriter myWriter = new FileWriter(fileToWrite);
-			if (DictionnaireTrie.isEmpty() == false) {
-				DictionnaireTrie.forEach((k, v) -> {
+			if (dictionnaireTrie.isEmpty() == false) {
+				dictionnaireTrie.forEach((k, v) -> {
 					try {
 						myWriter.write(k + " = " + v + "\n");
 					} catch (IOException e) {
@@ -75,19 +56,12 @@ public class AnalyticsCounter implements ISymptomReader {
 					}
 
 				});
-			} else {
-				CountSymptoms();
-				DictionnaireTrie.forEach((k, v) -> {
-					try {
-						myWriter.write(k + " = " + v + "\n");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-				});
-
-			}
+			} 
 			myWriter.close();
+			} catch (IOException e) {
+				System.out.println("Erreur d'ouverture");
+			}
+			
 		}
 
 	}
@@ -98,43 +72,112 @@ public class AnalyticsCounter implements ISymptomReader {
 	 * @param Dictionnaire
 	 * @param symptome
 	 */
-	public static void AddSymptome(Map<String, Integer> Dictionnaire, String symptome) {
-		if (Dictionnaire.containsKey(symptome)) {
-			Integer Quantity = Dictionnaire.get(symptome);
-			Quantity += 1;
-			Dictionnaire.put(symptome, Quantity);
+	@Override
+	public void addSymptome(Map<String, Integer> dictionnaire, String symptome) {
+		if (dictionnaire.containsKey(symptome)) {
+			Integer quantity = dictionnaire.get(symptome);
+			quantity += 1;
+			dictionnaire.put(symptome, quantity);
 
 		} else {
-			Dictionnaire.put(symptome, 1);
+			dictionnaire.put(symptome, 1);
 		}
 		
 
 	}
 
+
 	/**
 	 * Comptage des occurences
 	 */
+
 	@Override
-	public void CountSymptoms() {
+	public void countSymptoms() {
 		HashMap<String, Integer> resultDictionnaire = new HashMap<String, Integer>();
 		if (fileToAnalyze != null) {
 			try {
-				BufferedReader Lecture = new BufferedReader(new FileReader(fileToAnalyze));
-				String ligne = Lecture.readLine();
+				BufferedReader lecture = new BufferedReader(new FileReader(fileToAnalyze));
+				String ligne = lecture.readLine();
 				while (ligne != null) {
-					AddSymptome(resultDictionnaire, ligne);
-					ligne = Lecture.readLine();
+					addSymptome(resultDictionnaire, ligne);
+					ligne = lecture.readLine();
 				}
-				Lecture.close();
+				lecture.close();
 
-				DictionnaireTrie = new TreeMap<String, Integer>(resultDictionnaire);
-				printSymptoms(resultDictionnaire);
-
+				this.dictionnaireTrie = new TreeMap<String, Integer>(resultDictionnaire);
 			} catch (FileNotFoundException e) {
 				System.out.println("Erreur d'ouverture");
 			} catch (IOException e) {
 				System.out.println("Erreur de lecture");
 			}
 		}
+		
+	}
+
+
+
+	@Override
+	public void iSymptomToWrite(String fileToWrite) {
+		if (fileToWrite != null) {
+			try {
+			FileWriter myWriter = new FileWriter(fileToWrite);
+			if (dictionnaireTrie.isEmpty() == false) {
+				dictionnaireTrie.forEach((k, v) -> {
+					try {
+						myWriter.write(k + " = " + v + "\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				});
+			} 
+			myWriter.close();
+			} 
+			catch (FileNotFoundException e) {
+				System.out.println("Erreur d'ouverture");
+			} catch (IOException e) {
+				System.out.println("Erreur de lecture");
+			}
+			
+		}
+	}
+
+
+	/**
+	 * Lecture du fichier et affichage dans la console
+	 */
+	@Override
+	public void readTheFile() {
+		if (fileToAnalyze != null) {
+			try {
+				BufferedReader lecture = new BufferedReader(new FileReader(fileToAnalyze));
+				String ligne = lecture.readLine();
+				System.out.println("liste des symptomes");
+				while (ligne != null) {
+					System.out.println(ligne);
+					ligne = lecture.readLine();
+				}
+				lecture.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Erreur d'ouverture");
+			} catch (IOException e) {
+				System.out.println("Erreur de lecture");
+			}
+		}
+		
+	}
+
+
+	@Override
+	public String getFileName() {
+		return this.fileToAnalyze;
+	}
+
+
+
+	@Override
+	public void setFileName(String fileName) {
+		if (fileName != null) this.fileToAnalyze = fileName;
+		
 	}
 }
